@@ -32,6 +32,18 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# local data
+/data
+
+# docker compose with real config
+docker-compose.yml
+
+# private context/planning docs
+/context
+DEPLOYMENT.md
+docker-compose.yml
 
 # vercel
 .vercel

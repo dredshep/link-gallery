@@ -1,0 +1,14 @@
+node_modules
+.next
+.env.local
+.env
+data
+context
+.git
+README.md
+CLAUDE.md
+AGENTS.md
+Caddyfile.example
+docker-compose.yml
+docker-compose.example.yml
+LICENSE.md

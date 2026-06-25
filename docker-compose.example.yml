@@ -1,0 +1,28 @@
+services:
+  link-gallery:
+    build: .
+    container_name: link-gallery
+    restart: unless-stopped
+    environment:
+      DATA_DIR: /data
+      ORIGINALS_DIR: /data/originals
+      THUMBS_DIR: /data/thumbs
+      DB_PATH: /data/gallery.sqlite
+      PUBLIC_IMAGE_BASE_URL: https://images.example.com/raw
+      TAILSCALE_IMAGE_BASE_URL: http://100.x.x.x:25053/raw
+      DEFAULT_COPY_MODE: public
+      THUMB_SIZE: "420"
+      PAGE_SIZE: "80"
+      PORT: "25053"
+    volumes:
+      - ./data:/data
+    # Option A: expose on host directly
+    ports:
+      - "25053:25053"
+    # Option B: use a shared Docker network (e.g. for Caddy reverse proxy)
+    # networks:
+    #   - caddy_net
+    #
+# networks:
+#   caddy_net:
+#     external: true

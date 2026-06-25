@@ -1,0 +1,22 @@
+# Protected gallery UI — behind Authelia (password + WebAuthn)
+# Cloudflare Tunnel points gallery.example.me -> http://caddy-net:80
+http://gallery.example.me {
+    forward_auth authelia:9091 {
+        uri /api/authz/forward-auth
+        copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
+        header_up X-Forwarded-Proto https
+    }
+
+    reverse_proxy link-gallery:25053
+}
+
+# Public image serving — only /raw/* is exposed, no auth
+# Cloudflare Tunnel points images.example.me -> http://caddy-net:80
+http://images.example.me {
+    @raw path /raw/*
+    handle @raw {
+        reverse_proxy link-gallery:25053
+    }
+
+    respond "Not found" 404
+}
