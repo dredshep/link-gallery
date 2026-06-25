@@ -6,7 +6,9 @@ Self-hosted image gallery designed for browsing, tagging, and copying image URLs
 
 Upload images. Browse a dense grid. Tag them. Select many. Copy their URLs as raw links or `![markdown](embeds)`. Paste into Obsidian. That's the workflow.
 
-<img width="500" height="932" alt="image" src="https://github.com/user-attachments/assets/8767842e-0736-4d03-a5b2-6667fbe80e07" /><img width="393" height="851" alt="image" src="https://github.com/user-attachments/assets/051e3e3f-8bdb-448c-a913-dbba5849d0b6" />
+|Interactive gallery|Image preview|
+|---|---|
+|<img width="500" height="932" alt="image" src="https://github.com/user-attachments/assets/8767842e-0736-4d03-a5b2-6667fbe80e07" />|<img width="393" height="851" alt="image" src="https://github.com/user-attachments/assets/051e3e3f-8bdb-448c-a913-dbba5849d0b6" />|
 
 
 
