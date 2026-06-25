@@ -6,6 +6,7 @@ import type { Asset } from "@/lib/types";
 interface ImageTileProps {
   asset: Asset;
   index: number;
+  columns: number;
   isSelected: boolean;
   selectionActive: boolean;
   paintMode: boolean;
@@ -20,6 +21,7 @@ interface ImageTileProps {
 export function ImageTile({
   asset,
   index,
+  columns,
   isSelected,
   selectionActive,
   paintMode,
@@ -180,6 +182,8 @@ export function ImageTile({
     >
       <img
         src={asset.thumbUrl}
+        srcSet={`${asset.thumbUrl} 420w, ${asset.rawUrl} 1600w`}
+        sizes={`${Math.round(100 / columns)}vw`}
         alt={asset.displayName}
         className={`w-full h-full object-cover pointer-events-none transition-[filter] duration-200 ${
           shouldBlur ? "blur-xl scale-110" : ""

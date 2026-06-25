@@ -26,6 +26,7 @@ export function Gallery() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [paintMode, setPaintMode] = useState(false);
   const [hideNsfw, setHideNsfw] = useState(false);
+  const [columns, setColumns] = useState(6);
   const [fadingOutIds, setFadingOutIds] = useState<Set<string>>(new Set());
   const lastClickedIndex = useRef<number | null>(null);
 
@@ -41,8 +42,24 @@ export function Gallery() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const paintedInStroke = useRef<Set<string>>(new Set());
   const isPaintingRef = useRef(false);
-  const paintModeRef = useRef(false);
-  useEffect(() => { paintModeRef.current = paintMode; }, [paintMode]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("gallery-columns");
+    if (stored) {
+      setColumns(Number(stored));
+    } else {
+      const w = window.innerWidth;
+      setColumns(w < 640 ? 3 : w < 1024 ? 4 : 6);
+    }
+    if (localStorage.getItem("gallery-hide-nsfw") === "1") {
+      setHideNsfw(true);
+    }
+  }, []);
+
+  const handleColumnsChange = useCallback((n: number) => {
+    setColumns(n);
+    localStorage.setItem("gallery-columns", String(n));
+  }, []);
 
   useEffect(() => {
     fetch("/api/config")
@@ -197,10 +214,13 @@ export function Gallery() {
       scrollRaf = requestAnimationFrame(scrollStep);
     };
 
-    const upHandler = () => {
+    const upHandler = (e: PointerEvent) => {
       isPaintingRef.current = false;
       paintedInStroke.current = new Set();
       if (scrollRaf) { cancelAnimationFrame(scrollRaf); scrollRaf = null; }
+      if (e.pointerType === "touch") {
+        setPaintMode(false);
+      }
     };
 
     const moveHandler = (e: PointerEvent) => {
@@ -215,18 +235,18 @@ export function Gallery() {
     };
 
     const touchMoveHandler = (e: TouchEvent) => {
-      if ((isPaintingRef.current || paintModeRef.current) && e.touches.length <= 1) {
+      if (isPaintingRef.current && e.touches.length <= 1) {
         e.preventDefault();
       }
     };
 
     window.addEventListener("pointerup", upHandler);
-    window.addEventListener("pointercancel", upHandler);
+    window.addEventListener("pointercancel", upHandler as EventListener);
     window.addEventListener("pointermove", moveHandler);
     window.addEventListener("touchmove", touchMoveHandler, { passive: false });
     return () => {
       window.removeEventListener("pointerup", upHandler);
-      window.removeEventListener("pointercancel", upHandler);
+      window.removeEventListener("pointercancel", upHandler as EventListener);
       window.removeEventListener("pointermove", moveHandler);
       window.removeEventListener("touchmove", touchMoveHandler);
       if (scrollRaf) cancelAnimationFrame(scrollRaf);
@@ -436,11 +456,13 @@ export function Gallery() {
         paintMode={paintMode}
         onPaintModeChange={setPaintMode}
         hideNsfw={hideNsfw}
-        onHideNsfwChange={setHideNsfw}
+        onHideNsfwChange={(v) => { setHideNsfw(v); localStorage.setItem("gallery-hide-nsfw", v ? "1" : "0"); }}
         selectedCount={selected.size}
         onSelectVisible={selectVisible}
         onInvertVisible={invertVisible}
         onClearSelection={clearSelection}
+        columns={columns}
+        onColumnsChange={handleColumnsChange}
       />
 
       <div
@@ -466,7 +488,7 @@ export function Gallery() {
             <div
               className="grid gap-[2px]"
               style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+                gridTemplateColumns: `repeat(${columns}, 1fr)`,
               }}
             >
               {assets.map((asset, idx) => (
@@ -474,6 +496,7 @@ export function Gallery() {
                   key={asset.id}
                   asset={asset}
                   index={idx}
+                  columns={columns}
                   isSelected={selected.has(asset.id)}
                   selectionActive={selected.size > 0}
                   paintMode={paintMode}

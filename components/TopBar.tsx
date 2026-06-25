@@ -22,6 +22,8 @@ interface TopBarProps {
   onSelectVisible: () => void;
   onInvertVisible: () => void;
   onClearSelection: () => void;
+  columns: number;
+  onColumnsChange: (n: number) => void;
 }
 
 export function TopBar({
@@ -43,6 +45,8 @@ export function TopBar({
   onSelectVisible,
   onInvertVisible,
   onClearSelection,
+  columns,
+  onColumnsChange,
 }: TopBarProps) {
   const [tags, setTags] = useState<{ name: string; count: number }[]>([]);
   const [hidden, setHidden] = useState(false);
@@ -153,7 +157,7 @@ export function TopBar({
 
           <button
             onClick={() => onPaintModeChange(!paintMode)}
-            className={`h-7 px-3 text-xs rounded-lg font-medium transition-colors ${
+            className={`hidden sm:inline-flex h-7 px-3 text-xs rounded-lg font-medium transition-colors ${
               paintMode
                 ? "bg-amber-600 text-white"
                 : "bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-700"
@@ -194,6 +198,24 @@ export function TopBar({
               Clear ({selectedCount})
             </button>
           )}
+
+          <div className="hidden sm:flex items-center gap-2 ml-auto">
+            <svg className="w-4 h-4 text-zinc-500" viewBox="0 0 16 16" fill="currentColor">
+              <rect x="0" y="0" width="7" height="7" rx="1" />
+              <rect x="9" y="0" width="7" height="7" rx="1" />
+              <rect x="0" y="9" width="7" height="7" rx="1" />
+              <rect x="9" y="9" width="7" height="7" rx="1" />
+            </svg>
+            <input
+              type="range"
+              min={2}
+              max={12}
+              value={columns}
+              onChange={(e) => onColumnsChange(Number(e.target.value))}
+              className="w-24 h-1 accent-blue-500 cursor-pointer"
+            />
+            <span className="text-[10px] text-zinc-500 tabular-nums w-4 text-center">{columns}</span>
+          </div>
         </div>
       </div>
     </div>
